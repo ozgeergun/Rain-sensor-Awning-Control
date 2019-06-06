@@ -1,0 +1,53 @@
+#include <Servo.h>
+Servo myservomotor1;
+Servo myservomotor2;
+
+int rainPin = 2;
+int degree = 0;
+
+void setup(){
+  myservomotor1.attach(7); //motor1 is connected to pin7
+  myservomotor2.attach(8); //motor2 is connected to pin8
+  pinMode(rainPin, INPUT); //Reading sensor value as an input
+  attachInterrupt(0,raining,RISING); //when rainPin is rising interrupt is activated.
+  Serial.begin(9600);
+}
+
+void loop() {
+   
+}
+
+void raining(){ 
+
+  for (int i=0;i<11000;++i){ //waiting for a few seconds
+    delayMicroseconds(100);
+   }
+   
+   int sensorReading = analogRead(2); //Reading sensor value
+   
+    if(sensorReading>200){     //it is raining
+    for(degree = 0; degree < 90; degree++){    //90 degree angle
+        myservomotor1.write(degree); //awning is opened
+        myservomotor2.write(degree);
+    }
+    }
+    
+    attachInterrupt(0,notRaining,LOW); //when rainPin is falling interrupt is activated.
+ }
+
+  void notRaining(){
+   for (int i=0;i<11000;++i){ //waiting for a few seconds
+    delayMicroseconds(100);
+   }
+   
+   int sensorReading = analogRead(2); //Reading sensor value
+   
+   if(sensorReading<500){ //not raining
+    for(degree = 90; degree >= 0; degree--){   //90 degree angle
+        myservomotor1.write(degree); //awning is closed
+        myservomotor2.write(degree);
+   }
+  }
+     
+     attachInterrupt(0,raining,RISING); //when rainPin is rising interrupt is activated.
+ }
